@@ -105,7 +105,7 @@
         
         [btn addTarget:self action:@selector(ClickClassBtn:) forControlEvents:UIControlEventTouchUpInside];
         
-        btn.enabled = NO;
+        btn.enabled = YES;
         
         CGFloat btnX = i *btnW;
         btn.frame = CGRectMake(btnX, btnY, btnW, btnH);
@@ -120,6 +120,9 @@
     self.scrollView.pagingEnabled = YES;
     
     self.scrollView.showsHorizontalScrollIndicator = NO;
+    
+    //实现scrollView上的Button可以点击的同时也可以拖动
+    self.scrollView.panGestureRecognizer.delaysTouchesBegan = YES;
 
 }
 
