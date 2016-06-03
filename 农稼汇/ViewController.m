@@ -11,6 +11,7 @@
 #import "NewsCell.h"
 #import "FooterView.h"
 #import "HeaderView.h"
+#import "MBProgressHUD+NJ.h"
 
 @interface ViewController ()<UITableViewDataSource, FooterViewDelegate>
 
@@ -112,6 +113,9 @@
         [self.scrollView addSubview:btn];
         
         [self particularClick];
+        
+        
+        [self SwipeGesture];
     }
     
     CGFloat maxW = 50 * 13;
@@ -192,5 +196,29 @@
     [self presentModalViewController:detail animated:YES];
     
 }
+
+#pragma mark - swipe 轻扫
+-(void) SwipeGesture{
+    //初始化
+    UISwipeGestureRecognizer *swipe1 = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(SwipeActionLeft:)];
+    //设置轻扫的方向
+    swipe1.direction = UISwipeGestureRecognizerDirectionLeft;
+    [self.view addGestureRecognizer:swipe1];
+    
+    //初始化
+    UISwipeGestureRecognizer *swipe2 = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(SwipeActionRight:)];
+    //设置轻扫的方向
+    swipe2.direction = UISwipeGestureRecognizerDirectionRight;
+    [self.view addGestureRecognizer:swipe2];
+}
+
+-(void) SwipeActionLeft:(UISwipeGestureRecognizer *)swipe{
+    [MBProgressHUD showError:@"网络请求异常"];
+}
+
+-(void) SwipeActionRight:(UISwipeGestureRecognizer *)swipe{
+    [MBProgressHUD showError:@"网络请求异常"];
+}
+
 
 @end
