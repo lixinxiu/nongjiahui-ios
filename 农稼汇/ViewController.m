@@ -13,7 +13,7 @@
 #import "HeaderView.h"
 #import "MBProgressHUD+NJ.h"
 
-@interface ViewController ()<UITableViewDataSource, FooterViewDelegate>
+@interface ViewController ()<UITableViewDataSource, FooterViewDelegate, NSURLConnectionDelegate>
 
 @property (nonatomic, strong)NSMutableArray *news;
 
@@ -26,6 +26,8 @@
 - (IBAction)clickLeftBtn:(id)sender;
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+
+@property (nonatomic, strong)NSMutableData * receiveData;
 
 
 @end
@@ -73,6 +75,38 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+//    NSURL *url = [NSURL URLWithString:@"http://139.129.19.203:8080/"];
+//    
+//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+//    
+//    [request setHTTPMethod:@"GET"];
+//    
+//    [request setTimeoutInterval:120];
+//    
+//    [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
+//    
+//    [request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
+//    
+//    NSURLSession *session = [NSURLSession sharedSession];
+//    
+//    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error){
+//        if (error == nil) {
+//            NSString *dataStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+//            NSLog(@"data: %@",dataStr);
+//        }
+//    }];
+//    
+//    [task resume];
+//
+    
+    //第一步，创建url
+    NSURL *url = [NSURL URLWithString:@"http://139.129.19.203:8080/news/newstype"];
+    //第二步，创建请求
+    NSURLRequest *request = [[NSURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];
+    //第三步，连接服务器
+    NSURLConnection *connection = [[NSURLConnection alloc]initWithRequest:request delegate:self];
+    
+    
     self.tableView.rowHeight = 100;
     
     self.loginSign = false;
@@ -90,15 +124,81 @@
     
     //self.loginSign = 1;
     
+//    CGFloat btnW = 50;
+//    CGFloat btnH = 40;
+//    CGFloat btnY = 0;
+//    
+//    for (int i = 0; i < 12; i++) {
+//        UIButton *btn = [[UIButton alloc]init];
+//        
+////        NSString *imgName = [NSString stringWithFormat:@"%d.jpg",i];
+////        [btn setImage:[UIImage imageNamed:imgName] forState:UIControlStateNormal];
+//
+//        
+//        NSArray *class = [NSArray arrayWithObjects:@"精选",@"本地",@"农资",@"农机",@"新闻",@"行情",@"社会",@"健康",@"娱乐",@"科技",@"农民日报",@"家庭农场",@"农产品",nil];
+//        [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+//        [btn setTitle:class[i] forState:UIControlStateNormal];
+//        
+//        [btn addTarget:self action:@selector(ClickClassBtn:) forControlEvents:UIControlEventTouchUpInside];
+//        
+//        btn.enabled = YES;
+//        
+//        CGFloat btnX = i *btnW;
+//        btn.frame = CGRectMake(btnX, btnY, btnW, btnH);
+//        [self.scrollView addSubview:btn];
+//    }
+    
+    CGFloat maxW = 50 * 12;
+    self.scrollView.contentSize = CGSizeMake(maxW, 0);
+    
+    self.scrollView.pagingEnabled = YES;
+    
+    self.scrollView.showsHorizontalScrollIndicator = NO;
+    
+    //实现scrollView上的Button可以点击的同时也可以拖动
+    self.scrollView.panGestureRecognizer.delaysTouchesBegan = YES;
+    
+    [self particularClick];
+    
+    [self SwipeGesture];
+
+}
+
+//接收到服务器回应的时候调用此方法
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    NSHTTPURLResponse *res = (NSHTTPURLResponse *)response;
+    NSLog(@"%@",[res allHeaderFields]);
+    self.receiveData = [NSMutableData data];
+    
+}
+
+//接收到服务器传输数据的时候调用，此方法根据数据大小执行若干次
+-(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
+    //json文件中的[]表示一个数据。
+    //反序列化json数据
+    
+    //第二个参数是解析方式，一般用NSJSONReadingAllowFragments
+    NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+    
+    NSLog(@"%@", array);  //json解析以后是nsarray格式的数据。
+    
+    //提示：如果开发网络应用，可以将反序列化出来的对象，保存至沙箱，以便后续开发使用。
+    NSArray *docs = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *path = [docs[0]stringByAppendingPathComponent:@"json.plist"];
+    [array writeToFile:path atomically:YES]; //把array里面的数据写入沙箱中的jspn.plist中。
+    
     CGFloat btnW = 50;
     CGFloat btnH = 40;
     CGFloat btnY = 0;
     
-    for (int i = 0; i < 13; i++) {
+    for (int i = 0; i < 12; i++) {
         UIButton *btn = [[UIButton alloc]init];
         
-//        NSString *imgName = [NSString stringWithFormat:@"%d.jpg",i];
-//        [btn setImage:[UIImage imageNamed:imgName] forState:UIControlStateNormal];
+        //        NSString *imgName = [NSString stringWithFormat:@"%d.jpg",i];
+        //        [btn setImage:[UIImage imageNamed:imgName] forState:UIControlStateNormal];
+        
         
         NSArray *class = [NSArray arrayWithObjects:@"精选",@"本地",@"农资",@"农机",@"新闻",@"行情",@"社会",@"健康",@"娱乐",@"科技",@"农民日报",@"家庭农场",@"农产品",nil];
         [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
@@ -111,24 +211,23 @@
         CGFloat btnX = i *btnW;
         btn.frame = CGRectMake(btnX, btnY, btnW, btnH);
         [self.scrollView addSubview:btn];
-        
-        [self particularClick];
-        
-        
-        [self SwipeGesture];
     }
-    
-    CGFloat maxW = 50 * 13;
-    self.scrollView.contentSize = CGSizeMake(maxW, 0);
-    
-    self.scrollView.pagingEnabled = YES;
-    
-    self.scrollView.showsHorizontalScrollIndicator = NO;
-    
-    //实现scrollView上的Button可以点击的同时也可以拖动
-    self.scrollView.panGestureRecognizer.delaysTouchesBegan = YES;
-
+    [self.receiveData appendData:data];
 }
+
+//数据传完之后调用此方法
+-(void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
+    NSString *receiveStr = [[NSString alloc]initWithData:self.receiveData encoding:NSUTF8StringEncoding];
+    NSLog(@"%@",receiveStr);
+}
+
+//网络请求过程中，出现任何错误（断网，连接超时等）会进入此方法
+-(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+    NSLog(@"%@",[error localizedDescription]);
+}
+
 
 - (void) ClickClassBtn:(id)sender{
     NSLog(@"点击分类");
