@@ -124,30 +124,30 @@
     
     //self.loginSign = 1;
     
-//    CGFloat btnW = 50;
-//    CGFloat btnH = 40;
-//    CGFloat btnY = 0;
-//    
-//    for (int i = 0; i < 12; i++) {
-//        UIButton *btn = [[UIButton alloc]init];
-//        
-////        NSString *imgName = [NSString stringWithFormat:@"%d.jpg",i];
-////        [btn setImage:[UIImage imageNamed:imgName] forState:UIControlStateNormal];
-//
-//        
-//        NSArray *class = [NSArray arrayWithObjects:@"精选",@"本地",@"农资",@"农机",@"新闻",@"行情",@"社会",@"健康",@"娱乐",@"科技",@"农民日报",@"家庭农场",@"农产品",nil];
-//        [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-//        [btn setTitle:class[i] forState:UIControlStateNormal];
-//        
-//        [btn addTarget:self action:@selector(ClickClassBtn:) forControlEvents:UIControlEventTouchUpInside];
-//        
-//        btn.enabled = YES;
-//        
-//        CGFloat btnX = i *btnW;
-//        btn.frame = CGRectMake(btnX, btnY, btnW, btnH);
-//        [self.scrollView addSubview:btn];
-//    }
+    CGFloat btnW = 50;
+    CGFloat btnH = 40;
+    CGFloat btnY = 0;
     
+    for (int i = 0; i < 12; i++) {
+        UIButton *btn = [[UIButton alloc]init];
+        
+//        NSString *imgName = [NSString stringWithFormat:@"%d.jpg",i];
+//        [btn setImage:[UIImage imageNamed:imgName] forState:UIControlStateNormal];
+
+        
+        NSArray *class = [NSArray arrayWithObjects:@"精选",@"本地",@"农资",@"农机",@"新闻",@"行情",@"社会",@"健康",@"娱乐",@"科技",@"农民日报",@"家庭农场",@"农产品",nil];
+        [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [btn setTitle:class[i] forState:UIControlStateNormal];
+        
+        [btn addTarget:self action:@selector(ClickClassBtn:) forControlEvents:UIControlEventTouchUpInside];
+        
+        btn.enabled = YES;
+        
+        CGFloat btnX = i *btnW;
+        btn.frame = CGRectMake(btnX, btnY, btnW, btnH);
+        [self.scrollView addSubview:btn];
+    }
+
     CGFloat maxW = 50 * 12;
     self.scrollView.contentSize = CGSizeMake(maxW, 0);
     
@@ -183,35 +183,6 @@
     NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
     
     NSLog(@"%@", array);  //json解析以后是nsarray格式的数据。
-    
-    //提示：如果开发网络应用，可以将反序列化出来的对象，保存至沙箱，以便后续开发使用。
-    NSArray *docs = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *path = [docs[0]stringByAppendingPathComponent:@"json.plist"];
-    [array writeToFile:path atomically:YES]; //把array里面的数据写入沙箱中的jspn.plist中。
-    
-    CGFloat btnW = 50;
-    CGFloat btnH = 40;
-    CGFloat btnY = 0;
-    
-    for (int i = 0; i < 12; i++) {
-        UIButton *btn = [[UIButton alloc]init];
-        
-        //        NSString *imgName = [NSString stringWithFormat:@"%d.jpg",i];
-        //        [btn setImage:[UIImage imageNamed:imgName] forState:UIControlStateNormal];
-        
-        
-        NSArray *class = [NSArray arrayWithObjects:@"精选",@"本地",@"农资",@"农机",@"新闻",@"行情",@"社会",@"健康",@"娱乐",@"科技",@"农民日报",@"家庭农场",@"农产品",nil];
-        [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [btn setTitle:class[i] forState:UIControlStateNormal];
-        
-        [btn addTarget:self action:@selector(ClickClassBtn:) forControlEvents:UIControlEventTouchUpInside];
-        
-        btn.enabled = YES;
-        
-        CGFloat btnX = i *btnW;
-        btn.frame = CGRectMake(btnX, btnY, btnW, btnH);
-        [self.scrollView addSubview:btn];
-    }
     [self.receiveData appendData:data];
 }
 
